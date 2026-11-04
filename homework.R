@@ -1,33 +1,10 @@
-# 259 Homework - exploratory data analysis + integrating skills
-# For full credit, answer at least 8/10 questions
-# List students working with below:
-
 library(tidyverse)
-library(lubridate)
 library(DataExplorer)
-
-#> These data are drawn from the fivethirtyeight article:
-#> http://fivethirtyeight.com/features/what-12-months-of-record-setting-temperatures-looks-like-across-the-u-s/
-#> The directory us-weather-history contains a data file for each of 10 cities, labelled by their station name
-#> Each data file contains:
-#> `date` | The date of the weather record, formatted YYYY-M-D
-#> `actual_mean_temp` | The measured average temperature for that day
-#> `actual_min_temp` | The measured minimum temperature for that day
-#> `actual_max_temp` | The measured maximum temperature for that day
-#> `average_min_temp` | The average minimum temperature on that day since 1880
-#> `average_max_temp` | The average maximum temperature on that day since 1880
-#> `record_min_temp` | The lowest ever temperature on that day since 1880
-#> `record_max_temp` | The highest ever temperature on that day since 1880
-#> `record_min_temp_year` | The year that the lowest ever temperature occurred
-#> `record_max_temp_year` | The year that the highest ever temperature occurred
-#> `actual_precipitation` | The measured amount of rain or snow for that day
-#> `average_precipitation` | The average amount of rain or snow on that day since 1880
-#> `record_precipitation` | The highest amount of rain or snow on that day since 1880
+library(rstatix)
 
 stations <- c("KCLT", "KCQT", "KHOU", "KIND", "KJAX", "KMDW", "KNYC", "KPHL", "KPHX", "KSEA")
 cities <- c("Charlotte", "Los Angeles", "Houston", "Indianapolis", "Jacksonville", 
             "Chicago", "New York City", "Philadelphia", "Phoenix", "Seattle")
-
 
 # QUESTION 1
 #> The data files are in the directory 'us-weather-history'
@@ -42,53 +19,46 @@ cities <- c("Charlotte", "Los Angeles", "Houston", "Indianapolis", "Jacksonville
 
 # QUESTION 2
 #> Use map() and your new function to read in all 10 stations
-#> Note that because map_dfr() has been superseded, and map() does not automatically bind rows, you will need to do so in the code.
+#> Note that because map_dfr() has been superseded, and map() does not automatically bind rows, 
+#> you will need to do so in the code with bind_rows()
 #> Save the resulting dataset to "ds"
+
 
 
 
 # QUESTION 3
 #> Make a factor called "city" based on the station variable
 #> (station should be the level and city should be the label)
-#> Use fct_count to check that there are 365 days of data for each city 
+#> Use rstatix::freq_tables() to check that there are 365 days of data for each city 
+#> and save the results to a new tibble
+#> Write a logical statement that would trigger a warning if any city did not have 365 days
+
+
 
 
 # QUESTION 4
-#> Since we're scientists, let's convert all the temperatures to C
-#> Write a function to convert F to C, and then use mutate across to 
-#> convert all of the temperatures, rounded to a tenth of a degree
+#> In question 3, all of the cities do have 365 days of data, so how would you know
+#> if your check worked? Create a test to mess up the dataset to make sure that your
+#> check does throw an error if the conditions aren't met
 
 
 
-### CHECK YOUR WORK
 #> At this point, your data should look like the "compiled_data.csv" file
 #> in data-clean. If it isn't, read in that file to use for the remaining
 #> questions so that you have the right data to work with.
 
 # QUESTION 5
-#> Write a function that counts the number of extreme temperature days,
-#> where the actual min or max was equal to the (i.e., set the) record min/max
-#> A piped function starting with '.' is a good strategy here.
-#> Group the dataset by city to see how many extreme days each city experienced,
-#> and sort in descending order to show which city had the most:
-#> (Seattle, 20, Charlotte 12, Phoenix 12, etc...)
-#> Don't save this summary over the original dataset!
-
-
-
-# QUESTION 6
-#> Pull out the month from the date and make "month" a factor
-#> Split the tibble by month into a list of tibbles 
+#> Find a function that lets you pull out the month from the date 
+#> and make "month" a factor as a new variable in ds
 
 
 
 # QUESTION 7
-#> For each month, determine the correlation between the actual_precipitation
-#> and the average_precipitation (across all cities), and between the actual and average mins/maxes
-#> Use a for loop, and print the month along with the resulting correlation
-#> Look at the documentation for the ?cor function if you've never used it before
-
-
+#> Use rstatix to check if there are any outliers for actual_mean_temp.
+#> Save the outliers to a new tibble.
+#> In a piped statement, filter out those outliers from ds and then use
+#> get_summary_stats() to get the mean and SE for actual_mean_temp
+#> by month.
 
 
 # QUESTION 8
@@ -98,21 +68,18 @@ cities <- c("Charlotte", "Los Angeles", "Houston", "Indianapolis", "Jacksonville
 #> Check the documentation for plot_correlation for an easy way to do this
 
 
-
-
 # QUESTION 9
 #> Create a scatterplot of actual_mean_temp (y axis) by date (x axis)
 #> Use facet_wrap to make a separate plot for each city (3 columns)
 #> Make the points different colors according to month
 
 
-
-
 # QUESTION 10
 #> Write a function that takes the dataset and the abbreviate month as arguments
 #> and creates a scatter and line plot of actual temperature (y axis) by date (x axis)
-#> Note, just add geom_line() to your ggplot call to get the lines
-#> use the ggtitle() function to add the month as a title
+#> filtered for that particular month.
+#> Your ggplot will need both geom_line() and geom_scatter().
+#> Use the ggtitle() function to add the month as a title
 #> The function should save the plot as "eda/month_name.png"
 #> The eda folder has an example of what each plot should look like
 #> Call the function in a map or loop to generate graphs for each month
