@@ -1,6 +1,13 @@
+# Aylin Luna
+
 library(tidyverse)
 library(DataExplorer)
 library(rstatix)
+
+# Collaborators
+# Megan Richardson
+# Krista Bebis
+# Madeline Hoorn
 
 stations <- c("KCLT", "KCQT", "KHOU", "KIND", "KJAX", "KMDW", "KNYC", "KPHL", "KPHX", "KSEA")
 cities <- c("Charlotte", "Los Angeles", "Houston", "Indianapolis", "Jacksonville", 
@@ -15,6 +22,9 @@ cities <- c("Charlotte", "Los Angeles", "Houston", "Indianapolis", "Jacksonville
 #> Call the function "read_weather" 
 #> Check by reading/glimpsing a single station's file
 
+read_weather <- function(weather) {
+  
+}
 
 
 # QUESTION 2
