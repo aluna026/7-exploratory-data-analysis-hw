@@ -22,10 +22,14 @@ cities <- c("Charlotte", "Los Angeles", "Houston", "Indianapolis", "Jacksonville
 #> Call the function "read_weather" 
 #> Check by reading/glimpsing a single station's file
 
-read_weather <- function(weather) {
-  
-}
-
+read_weather <- function(station) {
+  stationabbrev <- paste0(station, ".csv")
+  data <- read.csv(file.path("us-weather-history", stationabbrev))
+  data$station <- station
+  data$date <- as.Date(data$date, format = "%Y-%m-%d")
+  return(data)
+ }
+read_weather("KCLT")
 
 # QUESTION 2
 #> Use map() and your new function to read in all 10 stations
@@ -33,7 +37,7 @@ read_weather <- function(weather) {
 #> you will need to do so in the code with bind_rows()
 #> Save the resulting dataset to "ds"
 
-
+ds <- map(stations, read_weather) %>% bind_rows()
 
 
 # QUESTION 3
@@ -43,24 +47,48 @@ read_weather <- function(weather) {
 #> and save the results to a new tibble
 #> Write a logical statement that would trigger a warning if any city did not have 365 days
 
+ds$city <- factor(ds$station,
+                  levels = stations,
+                  labels = cities)
 
+days <- ds %>% freq_table(city) # there are 365 days per city
 
+if (any(days$n != 365)) {
+    print("365 days check FAILED")
+  } else {
+    print("365 days check PASSED")
+  }
 
 # QUESTION 4
 #> In question 3, all of the cities do have 365 days of data, so how would you know
 #> if your check worked? Create a test to mess up the dataset to make sure that your
 #> check does throw an error if the conditions aren't met
 
+# Filtering out the first row from Charlotte KCLT
+ds_test <- ds %>% slice(-1)
+
+# Re-running the previous code here:
+days <- ds_test %>% freq_table(city) # there are 365 days per city
+
+if (any(days$n != 365)) {
+  print("365 days check FAILED")
+} else {
+  print("365 days check PASSED")
+} #now it failed! 
 
 
 #> At this point, your data should look like the "compiled_data.csv" file
 #> in data-clean. If it isn't, read in that file to use for the remaining
 #> questions so that you have the right data to work with.
 
+  #correct_ds <- read.csv(file.path("data-clean", "compiled_data.csv")) 
+  #my data does look like the correct version so ill keep using ds instead of correct_ds
+
 # QUESTION 5
 #> Find a function that lets you pull out the month from the date 
 #> and make "month" a factor as a new variable in ds
 
+ds <- ds %>% mutate(month = factor(month(date, label = TRUE)))
 
 
 # QUESTION 7
@@ -69,6 +97,12 @@ read_weather <- function(weather) {
 #> In a piped statement, filter out those outliers from ds and then use
 #> get_summary_stats() to get the mean and SE for actual_mean_temp
 #> by month.
+
+outliers <- ds %>% identify_outliers(actual_mean_temp)
+
+ds <- ds %>% anti_join(outliers, by = c("city", "date"))
+
+ds %>% group_by(month) %>% get_summary_stats(actual_mean_temp)
 
 
 # QUESTION 8
