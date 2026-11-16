@@ -111,11 +111,19 @@ ds %>% group_by(month) %>% get_summary_stats(actual_mean_temp)
 #> Finally, use plot_correlation to investigate correlations between the continuous variables only
 #> Check the documentation for plot_correlation for an easy way to do this
 
+ds %>% plot_boxplot(by = "city")
+ds %>% plot_boxplot(by = "month")
+
+ds %>% plot_correlation(type = "c")
+
 
 # QUESTION 9
 #> Create a scatterplot of actual_mean_temp (y axis) by date (x axis)
 #> Use facet_wrap to make a separate plot for each city (3 columns)
 #> Make the points different colors according to month
+
+ggplot(ds, aes(x = date, y = actual_mean_temp, color = month)) +
+  geom_point() + facet_wrap("city", ncol = 3)
 
 
 # QUESTION 10
